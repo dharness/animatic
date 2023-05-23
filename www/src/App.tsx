@@ -1,7 +1,7 @@
 import Header from './components/Header'
 import styled from 'styled-components';
 import Toolbar from './components/Toolbar';
-import Artboard from './components/Artboard';
+import Artboard from './components/DrawingArea';
 import Timeline from './components/Timeline';
 
 
