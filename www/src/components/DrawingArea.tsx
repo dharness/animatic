@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
-
-interface Position {
-    x: number;
-    y: number;
-}
+import { RootState } from "../app/store";
+import { ToolId } from "../features/toolsSlice";
+import Tool from "../features/Tool";
+import Brush from "../features/BrushTool";
+import Eraser from "../features/EraserTool";
 
 const StyledDrawingArea = styled.div`
     background: grey;
@@ -19,80 +20,57 @@ const StyledDrawingArea = styled.div`
 const StyledCanvas = styled.canvas`
     box-sizing: border-box;
     margin: auto;
+    background: white;
 `;
 
-function getMousePos(canvas: any, event: MouseEvent): Position {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+type Tools = Partial<Record<ToolId, Tool>>
 
-    return {
-        x: (event.clientX - rect.left) * scaleX,
-        y: (event.clientY - rect.top) * scaleY
-    }
-}
+const tools: Tools = {
+    [ToolId.Brush]: new Brush(),
+    [ToolId.Eraser]: new Eraser(),
+};
+
 
 function Artboard() {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const activeToolId = useSelector((state: RootState) => state.tools.currentTool);
+    const canvasRef = useRef<HTMLCanvasElement>(document.createElement('canvas'));
     const aspectRatio = 3 / 4;
     const canvasWidth = 500;
     const canvasHeight = canvasWidth * aspectRatio;
-    const isDrawingRef = useRef(false);
-    const pevCursorPos = useRef<Position>({ x: 0, y: 0 });
-    const currentCursorPos = useRef<Position>({ x: 0, y: 0 });
+    const activeToolRef = useRef(tools[activeToolId]);
 
     function onMouseDown(event: MouseEvent) {
         event.stopPropagation();
-        isDrawingRef.current = true;
-        pevCursorPos.current = getMousePos(canvasRef.current, event);
+        activeToolRef.current?.onMouseDown(event);
     }
 
-    function onMouseUp(e: MouseEvent) {
-        e.stopPropagation();
-        isDrawingRef.current = false;
+    function onMouseUp(event: MouseEvent) {
+        event.stopPropagation();
+        activeToolRef.current?.onMouseUp(event);
     }
 
     function onMouseMove(event: MouseEvent) {
         event.stopPropagation();
-        if (!isDrawingRef.current) return;
-        currentCursorPos.current = getMousePos(canvasRef.current, event);
-
-        const ctx = canvasRef.current?.getContext("2d");
-        if (!ctx) return;
-
-        const { x: x1, y: y1 } = pevCursorPos.current;
-        const { x: x2, y: y2 } = currentCursorPos.current;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.lineCap = 'round';
-        ctx.lineWidth = 5;
-        ctx.stroke();
-
-        pevCursorPos.current = currentCursorPos.current;
+        activeToolRef.current?.onMouseMove(event);
     }
 
     useEffect(() => {
-        canvasRef.current?.addEventListener("mousedown", onMouseDown);
+        activeToolRef.current = tools[activeToolId];
+        activeToolRef.current?.activate(canvasRef.current);
+    }, [activeToolId])
+
+    useEffect(() => {
         window.addEventListener("mouseup", onMouseUp);
+        canvasRef.current?.addEventListener("mousedown", onMouseDown);
         canvasRef.current?.addEventListener("mousemove", onMouseMove);
 
         return () => {
-            canvasRef.current?.removeEventListener("mousedown", onMouseDown);
             window.removeEventListener("mouseup", onMouseUp);
+            canvasRef.current?.removeEventListener("mousedown", onMouseDown);
             canvasRef.current?.removeEventListener("mousemove", onMouseMove);
         }
     }, [])
 
-    useEffect(() => {
-        const ctx = canvasRef.current?.getContext("2d");
-        if (!ctx) return;
-        const w = canvasRef.current?.clientWidth || 0;
-        const h = canvasRef.current?.clientHeight || 0;
-
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, w, h);
-    });
     return (
         <StyledDrawingArea>
             <StyledCanvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />

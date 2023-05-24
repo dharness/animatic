@@ -1,6 +1,8 @@
+import type { RootState } from './../app/store'
+import { useSelector, useDispatch } from 'react-redux'
 import styled from "styled-components";
-import brushIcon from "./../assets/brush.svg"
-import eraserIcon from "./../assets/eraser.svg"
+import { ToolId, setTool } from './../features/toolsSlice'
+import icons from './../features/toolsIcons'
 
 const StyledToolbar = styled.div`
   background: plum;
@@ -22,10 +24,23 @@ const ToolButton = styled.button<{ $icon: string, $active: boolean }>`
 `;
 
 function Toolbar() {
+  const currentToolId = useSelector((state: RootState) => state.tools.currentTool);
+  const dispatch = useDispatch();
+
+  const getToolButtonClickHandler = (toolType: ToolId) => () => {
+    dispatch(setTool(toolType));
+  }
+
   return (
     <StyledToolbar>
-      <ToolButton $icon={brushIcon} />
-      <ToolButton $icon={eraserIcon} />
+      {[ToolId.Brush, ToolId.Eraser].map(toolId => {
+        return (<ToolButton
+          key={toolId}
+          $icon={icons[toolId]}
+          $active={currentToolId === toolId}
+          onClick={getToolButtonClickHandler(toolId)}
+        />)
+      })}
     </StyledToolbar>
   );
 }
