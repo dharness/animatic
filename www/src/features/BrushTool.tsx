@@ -1,11 +1,11 @@
-import { Position, getMousePosition } from "../utils/mouse";
+import { MousePosition, getMousePosition } from "../utils/mouse";
 import Tool from './Tool'
 
 export default class Brush implements Tool {
 
     private isDrawing: boolean = false;
-    private prevCursorPos: Position = { x: 0, y: 0 };
-    private currentCursorPos: Position = { x: 0, y: 0 };
+    private prevCursorPos: MousePosition = { x: 0, y: 0 };
+    private currentCursorPos: MousePosition = { x: 0, y: 0 };
     protected canvas: HTMLCanvasElement | null = null;
     protected ctx: CanvasRenderingContext2D | null = null;
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { RootState } from "../app/store";
@@ -6,6 +6,7 @@ import { ToolId } from "../features/toolsSlice";
 import Tool from "../features/Tool";
 import Brush from "../features/BrushTool";
 import Eraser from "../features/EraserTool";
+import Cursor from "./Cursor";
 
 const StyledDrawingArea = styled.div`
     background: grey;
@@ -15,6 +16,7 @@ const StyledDrawingArea = styled.div`
     box-sizing: border-box;
     overflow: hidden;
     display: flex;
+    cursor: none;
 `;
 
 const StyledCanvas = styled.canvas`
@@ -38,20 +40,27 @@ function Artboard() {
     const canvasWidth = 500;
     const canvasHeight = canvasWidth * aspectRatio;
     const activeToolRef = useRef(tools[activeToolId]);
+    const drawingAreaRef = useRef<HTMLDivElement>(null);
+    const [mouseIsOver, setMouseIsOver] = useState(false);
 
     function onMouseDown(event: MouseEvent) {
-        event.stopPropagation();
         activeToolRef.current?.onMouseDown(event);
     }
 
     function onMouseUp(event: MouseEvent) {
-        event.stopPropagation();
         activeToolRef.current?.onMouseUp(event);
     }
 
     function onMouseMove(event: MouseEvent) {
-        event.stopPropagation();
         activeToolRef.current?.onMouseMove(event);
+    }
+
+    function onMouseEnter() {
+        setMouseIsOver(true);
+    }
+
+    function onMouseLeave() {
+        setMouseIsOver(false);
     }
 
     useEffect(() => {
@@ -63,18 +72,24 @@ function Artboard() {
         window.addEventListener("mouseup", onMouseUp);
         canvasRef.current?.addEventListener("mousedown", onMouseDown);
         canvasRef.current?.addEventListener("mousemove", onMouseMove);
+        console.log(drawingAreaRef)
+        drawingAreaRef.current?.addEventListener("mouseenter", onMouseEnter);
+        drawingAreaRef.current?.addEventListener("mouseleave", onMouseLeave);
 
         return () => {
             window.removeEventListener("mouseup", onMouseUp);
             canvasRef.current?.removeEventListener("mousedown", onMouseDown);
             canvasRef.current?.removeEventListener("mousemove", onMouseMove);
+            drawingAreaRef.current?.removeEventListener("mouseenter", onMouseEnter);
+            drawingAreaRef.current?.removeEventListener("mouseleave", onMouseLeave);
         }
     }, [])
 
     return (
-        <StyledDrawingArea>
+        <StyledDrawingArea ref={drawingAreaRef}>
+            <Cursor active={mouseIsOver} />
             <StyledCanvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
-        </StyledDrawingArea>
+        </StyledDrawingArea >
     );
 }
 
