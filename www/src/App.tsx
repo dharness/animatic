@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import Toolbar from './components/Toolbar';
 import Artboard from './components/DrawingArea';
 import Timeline from './components/Timeline';
+import { useEffect } from 'react';
+import { loadUser } from './features/userSlice';
+import { useAppDispatch } from './app/store';
 
 
 const PageLayout = styled.div`
@@ -17,6 +20,11 @@ const PageLayout = styled.div`
 `;
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(loadUser());
+  }, []);
 
   return (
     <>

@@ -3,9 +3,9 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { RootState } from "../app/store";
 import { ToolId } from "../features/toolsSlice";
-import Tool from "../features/Tool";
-import Brush from "../features/BrushTool";
-import Eraser from "../features/EraserTool";
+import Tool from "../features/tools/Tool";
+import Brush from "../features/tools/BrushTool";
+import Eraser from "../features/tools/EraserTool";
 import Cursor from "./Cursor";
 
 const StyledDrawingArea = styled.div`
@@ -72,7 +72,6 @@ function Artboard() {
         window.addEventListener("mouseup", onMouseUp);
         canvasRef.current?.addEventListener("mousedown", onMouseDown);
         canvasRef.current?.addEventListener("mousemove", onMouseMove);
-        console.log(drawingAreaRef)
         drawingAreaRef.current?.addEventListener("mouseenter", onMouseEnter);
         drawingAreaRef.current?.addEventListener("mouseleave", onMouseLeave);
 

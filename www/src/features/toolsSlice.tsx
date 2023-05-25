@@ -17,7 +17,7 @@ const initialState: ToolState = {
 }
 
 export const toolsSlice = createSlice({
-    name: 'counter',
+    name: 'tools',
     initialState,
     reducers: {
         setTool: (state, action: PayloadAction<ToolId>) => {
