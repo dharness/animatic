@@ -1,4 +1,4 @@
-import { MousePosition, getMousePosition } from "../utils/mouse";
+import { MousePosition, getMousePosition } from "../../utils/mouse";
 import Tool from './Tool'
 
 export default class Brush implements Tool {
