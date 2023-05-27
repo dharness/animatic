@@ -1,8 +1,8 @@
-import type { RootState } from './../app/store'
+import type { RootState } from '../app/store'
 import { useSelector, useDispatch } from 'react-redux'
 import styled from "styled-components";
-import { ToolId, setTool } from './../features/toolsSlice'
-import icons from './../features/tools/toolsIcons'
+import { ToolId, setTool } from '../features/toolsSlice'
+import icons from '../features/tools/toolsIcons'
 
 const StyledToolbar = styled.div`
   background: plum;

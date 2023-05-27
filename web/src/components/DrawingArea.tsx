@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { RootState } from "../app/store";
+import { RootState, useAppDispatch } from "../app/store";
 import { ToolId } from "../features/toolsSlice";
 import Tool from "../features/tools/Tool";
 import Brush from "../features/tools/BrushTool";
 import Eraser from "../features/tools/EraserTool";
 import Cursor from "./Cursor";
+import { saveCanvasData } from "../features/canvasSlice";
 
 const StyledDrawingArea = styled.div`
     background: grey;
@@ -34,7 +35,9 @@ const tools: Tools = {
 
 
 function Artboard() {
+    const dispatch = useAppDispatch();
     const activeToolId = useSelector((state: RootState) => state.tools.currentTool);
+    const isSaving = useSelector((state: RootState) => state.canvas.isSaving);
     const canvasRef = useRef<HTMLCanvasElement>(document.createElement('canvas'));
     const aspectRatio = 3 / 4;
     const canvasWidth = 500;
@@ -55,13 +58,13 @@ function Artboard() {
         activeToolRef.current?.onMouseMove(event);
     }
 
-    function onMouseEnter() {
-        setMouseIsOver(true);
-    }
+    function onMouseEnter() { setMouseIsOver(true); }
+    function onMouseLeave() { setMouseIsOver(false); }
 
-    function onMouseLeave() {
-        setMouseIsOver(false);
-    }
+    useEffect(() => {
+        if (!isSaving) return;
+        dispatch(saveCanvasData())
+    }, [isSaving]);
 
     useEffect(() => {
         activeToolRef.current = tools[activeToolId];
@@ -86,6 +89,7 @@ function Artboard() {
 
     return (
         <StyledDrawingArea ref={drawingAreaRef}>
+            {isSaving && <div>Saving...</div>}
             <Cursor active={mouseIsOver} />
             <StyledCanvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
         </StyledDrawingArea >

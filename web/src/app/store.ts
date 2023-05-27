@@ -3,13 +3,15 @@ import { useDispatch } from 'react-redux'
 import toolsReducer from '../features/toolsSlice'
 import userReducer from '../features/userSlice'
 import projectsReducer from '../features/projectsSlice'
+import canvasReducer from '../features/canvasSlice'
 
 
 export const store = configureStore({
     reducer: {
         tools: toolsReducer,
         user: userReducer,
-        projects: projectsReducer
+        projects: projectsReducer,
+        canvas: canvasReducer,
     }
 })
 
