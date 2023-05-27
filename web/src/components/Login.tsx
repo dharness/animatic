@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { logInUser, signUpUser } from './../features/userSlice'
+import { logInUser, signUpUser } from '../features/userSlice'
 import { useAppDispatch } from '../app/store';
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";

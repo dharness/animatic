@@ -16,4 +16,5 @@ requires-python = ">=3.11"
 license = {text = "MIT"}
 
 [tool.pdm.scripts]
+dev = "uvicorn main:app --reload"
 start = "uvicorn main:app --reload"
