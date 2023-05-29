@@ -2,8 +2,7 @@
 
 server-build:
 	cd ./server; \
-	poetry lock; \
-	poetry install
+	poetry --version
 
 server:
 	cd ./server; \
