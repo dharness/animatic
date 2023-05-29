@@ -1,7 +1,8 @@
-.PHONY: server
+.PHONY: server server-build
 
 server-build:
 	cd ./server; \
+	poetry self update; \
 	poetry install
 
 server:
