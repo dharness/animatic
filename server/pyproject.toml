@@ -1,20 +1,16 @@
-
-[project]
-name = ""
-version = ""
+[tool.poetry]
+name = "server"
+version = "0.1.0"
 description = ""
-authors = [
-    {name = "", email = ""},
-]
-dependencies = [
-    "requests>=2.31.0",
-    "fastapi>=0.95.2",
-    "uvicorn[standard]>=0.22.0",
-    "black>=23.3.0",
-]
-requires-python = ">=3.11"
-license = {text = "MIT"}
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
 
-[tool.pdm.scripts]
-dev = "uvicorn main:app --reload"
-start = "uvicorn main:app --reload"
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.95.2"
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
