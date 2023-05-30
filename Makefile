@@ -6,4 +6,4 @@ server-build:
 
 server:
 	cd ./server; \
-	poetry run uvicorn main:app --reload
+	uvicorn main:app --reload
