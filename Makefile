@@ -2,12 +2,7 @@
 
 server-build:
 	cd ./server; \
-	pip install --upgrade pip; \
-	pip install poetry==1.2.0; \
-	rm poetry.lock; \
-	poetry lock; \
-	python -m poetry install; \
-	poetry --version
+	pip install -r requirements.txt
 
 server:
 	cd ./server; \
