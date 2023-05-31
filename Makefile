@@ -1,16 +1,22 @@
 VENV_DIR = .venv
 
-.PHONY: build server-build
+.PHONY: server server-build
 
-requirements:
-	cd ./server; \
-	poetry export --without-hashes --format=requirements.txt > requirements.txt
-
-server-install:
+server-venv:
 	@cd ./server; \
-	if [ -z "${RENDER}" ]; then \
-		echo "Environment variable 'RENDER' is not set. Exiting..."; \
-		exit 1; \
-	fi; \
-	echo "Found RENDER=${RENDER} - Running the script... "
+    if [ ! -d $(VENV_DIR) ]; then \
+        python3 -m venv $(VENV_DIR); \
+	else \
+		echo ".venv already exists, skipping..."; \
+    fi
+
+server-build:
+	@cd ./server; \
+	. .venv/bin/activate; \
+	which pip; \
 	pip install -r requirements.txt
+
+server:
+	cd ./server; \
+	. .venv/bin/activate; \
+	python -m uvicorn main:app --reload
