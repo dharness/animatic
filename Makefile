@@ -10,8 +10,10 @@ server-venv:
 
 server-build:
 	cd ./server; \
+	.venv/bin/activate; \
 	pip install -r requirements.txt
 
 server:
 	cd ./server; \
-	uvicorn main:app --reload
+	.venv/bin/activate; \
+	python -m uvicorn main:app --reload
