@@ -3,12 +3,12 @@ import cors from "cors";
 import dotenv from "dotenv-flow";
 dotenv.config({ silent: false });
 
-import { framesRouter } from "./frames";
+import { imageRouter } from "./routes/image";
 
 const app = express();
 app.use(cors());
 
-app.use("/protected", framesRouter);
+app.use("/image", imageRouter);
 
 app.get("/", (_req, res) => {
   const resp: string = "Hello creep";

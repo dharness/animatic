@@ -1,4 +1,4 @@
-import supabase from "../supabase";
+import supabase from "./../utils/supabase";
 
 async function requireAuth(req, res, next) {
   const authHeader = req.headers["authorization"];
@@ -6,9 +6,10 @@ async function requireAuth(req, res, next) {
 
   if (token == null) return res.sendStatus(401);
   const { data, error } = await supabase.auth.getUser(token);
-  if (error !== null) return res.sendStatus(401);
+  console.log(error);
+  if (error !== null || data?.user == null) return res.sendStatus(401);
+  req.user = data.user;
 
-  console.log(data);
   next();
 }
 
