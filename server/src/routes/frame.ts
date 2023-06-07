@@ -2,7 +2,7 @@ import express from "express";
 import { requireAuth } from "../middleware/auth";
 import { validateParameters } from "../middleware/validateParamaters";
 import Joi from "joi";
-import { storeImage } from "../utils/imageStorage";
+import { saveImage } from "../utils/imageStorage";
 import prisma from "../utils/prisma";
 
 const frameRouter = express.Router();
@@ -25,7 +25,7 @@ frameRouter.post("/", validateParameters(schema), async (req, res) => {
   });
   if (track == null) return res.status(400).send("Invalid track id");
 
-  const { url } = await storeImage(`${req.body.id}.png`, req.body.image);
+  const { url } = await saveImage(req.body.image);
   const { start, end } = req.body;
   const frame = await prisma.frame.create({
     data: {
