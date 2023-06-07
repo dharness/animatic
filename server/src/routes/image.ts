@@ -7,10 +7,13 @@ const imageRouter = express.Router();
 imageRouter.use(requireAuth);
 
 const schema = Joi.object({
-  a: Joi.string(),
+  image: Joi.string().required(),
+  id: Joi.number().required(),
+  start: Joi.number().integer().required(),
+  end: Joi.number().integer().required(),
 });
 
-imageRouter.get("/", validateParameters(schema), (req, res) => {
+imageRouter.post("/", validateParameters(schema), (req, res) => {
   const { id } = req.user;
   console.log(id);
   res.sendStatus(200);

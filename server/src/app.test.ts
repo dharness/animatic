@@ -23,13 +23,43 @@ test("health check route does not require token", async () => {
 });
 
 test("protected route rejects un-authed reqs", async () => {
-  const response = await request(app).get("/image");
+  const response = await request(app).post("/image");
   expect(response.statusCode).toBe(401);
 });
 
-test.only("protected route rejects un-authed reqs", async () => {
-  const response = await request(app)
-    .get("/image")
-    .set("Authorization", "Bearer " + apiAccessToken)
-    .expect(200);
+describe("/image", () => {
+  let response;
+  const body = {
+    image: "image-data",
+    id: 123,
+    start: 0,
+    end: 1000,
+  };
+
+  beforeAll(async () => {
+    response = await request(app)
+      .post("/image")
+      .set("Authorization", "Bearer " + apiAccessToken)
+      .send(body);
+  });
+
+  test("protected route accepts authed requests", async () => {
+    expect(response.statusCode).toBe(200);
+  });
+
+  test("protected route rejects requests with invalid body", async () => {
+    const response = await request(app)
+      .post("/image")
+      .set("Authorization", "Bearer " + apiAccessToken)
+      .send({ ...body, image: undefined });
+
+    expect(response.statusCode).toBe(400);
+  });
+
+  test("protected route saves uploaded image in database", async () => {
+    const image = await prisma.frame.findUnique({
+      where: { id: body.id },
+    });
+    expect(image).not.toBeNull();
+  });
 });

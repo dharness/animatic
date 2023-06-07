@@ -6,7 +6,6 @@ async function requireAuth(req, res, next) {
 
   if (token == null) return res.sendStatus(401);
   const { data, error } = await supabase.auth.getUser(token);
-  console.log(error);
   if (error !== null || data?.user == null) return res.sendStatus(401);
   req.user = data.user;
 
