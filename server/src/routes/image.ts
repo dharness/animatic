@@ -2,35 +2,24 @@ import express from "express";
 import { requireAuth } from "../middleware/auth";
 import { validateParameters } from "../middleware/validateParamaters";
 import Joi from "joi";
+import { storeImage } from "../utils/imageStorage";
 
 const imageRouter = express.Router();
 imageRouter.use(requireAuth);
 
 const schema = Joi.object({
-  image: Joi.string().required(),
+  image: Joi.string().base64().required(),
   id: Joi.number().required(),
   start: Joi.number().integer().required(),
   end: Joi.number().integer().required(),
 });
 
-imageRouter.post("/", validateParameters(schema), (req, res) => {
+imageRouter.post("/", validateParameters(schema), async (req, res) => {
   const { id } = req.user;
-  console.log(id);
+  const result = await storeImage(`${id}-${req.body.id}.png`, req.body.image);
+  console.log(result);
+
   res.sendStatus(200);
 });
-
-/*
-body: {
-  "frames": [
-    {
-      id: 1,
-      imgBuffer: []
-      start: 0,
-      end: 1000
-    }
-  ]
-}
-
-*/
 
 export { imageRouter };

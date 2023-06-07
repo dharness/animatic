@@ -2,7 +2,8 @@ import app from "./app";
 import request from "supertest";
 import supabase from "./utils/supabase";
 import prisma from "./utils/prisma";
-import { fstat } from "fs";
+import fs from "fs/promises";
+import path from "path";
 
 let apiAccessToken: string;
 
@@ -38,16 +39,14 @@ describe("/image", () => {
   };
 
   beforeAll(async () => {
-    console.log(__dirname);
-    // fs.readFile("./test-image.png", (err, data) => {
+    const data = await fs.readFile("./test-fixtures/test-image.png", {
+      encoding: "base64",
+    });
+    body.image = data;
     response = await request(app)
       .post("/image")
       .set("Authorization", "Bearer " + apiAccessToken)
       .send(body);
-  });
-
-  test("protected route accepts authed requests", async () => {
-    expect(response.statusCode).toBe(200);
   });
 
   test("protected route rejects requests with invalid body", async () => {
@@ -59,7 +58,11 @@ describe("/image", () => {
     expect(response.statusCode).toBe(400);
   });
 
-  test("protected route saves uploaded image in database", async () => {
+  test("protected route accepts authed requests", async () => {
+    expect(response.statusCode).toBe(200);
+  });
+
+  test.only("protected route saves uploaded image in database", async () => {
     const image = await prisma.frame.findUnique({
       where: { id: body.id },
     });
