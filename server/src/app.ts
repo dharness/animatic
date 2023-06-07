@@ -4,14 +4,14 @@ import cors from "cors";
 import dotenv from "dotenv-flow";
 dotenv.config({ silent: false });
 
-import { imageRouter } from "./routes/image";
+import { frameRouter } from "./routes/frame";
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use("/image", imageRouter);
+app.use("/frame", frameRouter);
 
 app.get("/", (_req, res) => {
   const resp: string = "Hello creep";

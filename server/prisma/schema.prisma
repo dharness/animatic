@@ -22,8 +22,8 @@ model Frame {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   imageUrl   String
-  duration   Int
-  index Int
+  start   Int
+  end   Int
   Track   Track @relation(fields: [trackId], references: [id])
   trackId Int
 }
