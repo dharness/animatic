@@ -2,6 +2,7 @@ import app from "./app";
 import request from "supertest";
 import supabase from "./utils/supabase";
 import prisma from "./utils/prisma";
+import { fstat } from "fs";
 
 let apiAccessToken: string;
 
@@ -37,6 +38,8 @@ describe("/image", () => {
   };
 
   beforeAll(async () => {
+    console.log(__dirname);
+    // fs.readFile("./test-image.png", (err, data) => {
     response = await request(app)
       .post("/image")
       .set("Authorization", "Bearer " + apiAccessToken)
