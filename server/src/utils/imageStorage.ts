@@ -26,7 +26,7 @@ async function saveImage(base64: string) {
     }
     return { url: fileUrl(BUCKET_NAME, imageName) };
   } catch (err) {
-    console.log("Error", err);
+    console.error("Error", err);
   }
 }
 

@@ -1,40 +1,40 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { requireAuth } from "../middleware/auth";
-import { validateParameters } from "../middleware/validateParamaters";
-import Joi from "joi";
+import { validate } from "../middleware/validate";
 import { saveImage } from "../utils/imageStorage";
 import prisma from "../utils/prisma";
+import { loadFrame, loadTrack } from "../middleware/loaders";
+import { postBodyFrameSchema } from "./frameSchemas";
 
-const frameRouter = express.Router();
+const frameRouter = express.Router({ mergeParams: true });
 frameRouter.use(requireAuth);
+frameRouter.use(loadTrack);
 
-const schema = Joi.object({
-  image: Joi.string().base64().required(),
-  trackId: Joi.number().required(),
-  start: Joi.number().integer().required(),
-  end: Joi.number().integer().required(),
+frameRouter.get("/", async (req, res) => {
+  const frames = req.track.frames;
+  res.status(200).send(frames);
 });
 
-frameRouter.post("/", validateParameters(schema), async (req, res) => {
-  const { id } = req.user;
+frameRouter.get("/:frameId", loadFrame, async (req, res) => {
+  res.status(200).send(req.frame);
+});
 
-  // get the associated track
-  const { trackId } = req.body;
-  const track = await prisma.track.findUnique({
-    where: { id: trackId },
-  });
-  if (track == null) return res.status(400).send("Invalid track id");
-
+interface TypedRequestBody<T> extends Express.Request {
+  body: T;
+}
+frameRouter.post("/", validate(postBodyFrameSchema), async (req, res) => {
   const { url } = await saveImage(req.body.image);
   const { start, end } = req.body;
-  const frame = await prisma.frame.create({
+  const prismaArgs = {
     data: {
       imageUrl: url,
       start,
       end,
-      trackId,
+      trackId: req.track.id,
     },
-  });
+  };
+
+  const frame = await prisma.frame.create(prismaArgs);
   if (!frame) return res.status(400).send("Failed to create frame");
   res.status(200).send(frame);
 });

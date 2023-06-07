@@ -1,26 +1,25 @@
-import { createAction, createSlice } from '@reduxjs/toolkit'
+import { createAction, createSlice } from "@reduxjs/toolkit";
 
-export const loadProjects = createAction('loadProjects')
+export const loadProjects = createAction("loadProjects");
 
 interface ProjectsState {
-    entities: []
+  entities: [];
 }
 
 const initialState = {
-    entities: []
-} as ProjectsState
+  entities: [],
+} as ProjectsState;
 
 const projectsSlice = createSlice({
-    name: 'projects',
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(loadProjects, (state, action) => {
-                console.log("project slice")
-            })
-    },
-})
+  name: "projects",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(loadProjects, (state, action) => {
+      console.log("project slice");
+    });
+  },
+});
 
-export const { } = projectsSlice.actions;
+export const {} = projectsSlice.actions;
 export default projectsSlice.reducer;
