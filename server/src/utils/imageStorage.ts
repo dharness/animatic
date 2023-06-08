@@ -22,7 +22,7 @@ async function getAllImages() {
   };
   try {
     const results = await s3Client.send(new ListObjectsCommand(params));
-    const imageUrls = results.Contents.map(({ Key }) =>
+    const imageUrls = (results.Contents || []).map(({ Key }) =>
       fileUrl(BUCKET_NAME, Key)
     );
     return imageUrls;
@@ -58,6 +58,8 @@ async function saveImage(base64: string) {
 }
 
 async function deleteImageBulk(imageUrls: string[]) {
+  if (imageUrls.length === 0) return;
+
   const Objects = imageUrls.map((url) => {
     const key = url.split("/").pop();
     return { Key: key };
