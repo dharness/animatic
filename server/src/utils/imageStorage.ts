@@ -1,12 +1,22 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client, region } from "./S3";
 import { v4 as uuidv4 } from "uuid";
+import fs from "fs/promises";
+import { array } from "joi";
 
 const BUCKET_NAME = "animatic-frames";
 
 const fileUrl = (bucket, key) => {
   return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
 };
+
+async function saveImageBulk(base64Bulk: string[]) {
+  return Promise.all(
+    base64Bulk.map(async (base64) => {
+      return saveImage(base64);
+    })
+  );
+}
 
 async function saveImage(base64: string) {
   const imageName = `${uuidv4()}.png`;
@@ -30,4 +40,4 @@ async function saveImage(base64: string) {
   }
 }
 
-export { saveImage };
+export { saveImage, saveImageBulk };

@@ -5,3 +5,8 @@ export const postBodyFrameSchema = Joi.object({
   start: Joi.number().integer().required(),
   end: Joi.number().integer().required(),
 });
+
+export const putBodyFramesBulkSchema = Joi.array().items({
+  start: Joi.number().integer().required(),
+  end: Joi.number().integer().required(),
+});

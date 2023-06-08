@@ -12,12 +12,12 @@ export async function loadTrack(req, res, next) {
   next();
 }
 
-export async function loadFrame(req, res, next) {
-  const frameId = Number(req.params.frameId);
-  const frame = await prisma.frame.findUnique({
-    where: { id: frameId },
-  });
-  if (frame === null) return res.status(400).send("Cannot find frame");
-  req.frame = frame;
-  next();
-}
+// export async function loadFrame(req, res, next) {
+//   const frameId = Number(req.params.frameId);
+//   const frame = await prisma.frame.findUnique({
+//     where: { id: frameId },
+//   });
+//   if (frame === null) return res.status(400).send("Cannot find frame");
+//   req.frame = frame;
+//   next();
+// }

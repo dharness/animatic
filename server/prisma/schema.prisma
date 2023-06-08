@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,17 +12,5 @@ model Track {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
-  frames    Frame[]
+  frames    Json[]
 }
-
-model Frame {
-  id         Int       @id @default(autoincrement())
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  imageUrl   String
-  start   Int
-  end   Int
-  Track   Track @relation(fields: [trackId], references: [id])
-  trackId Int
-}
-

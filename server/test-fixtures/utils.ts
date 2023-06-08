@@ -16,9 +16,14 @@ export async function createUser() {
 }
 
 export async function createTrack(userId: string) {
-  const track = await prisma.track.create({ data: { userId } });
-  return track;
+  return await prisma.track.create({ data: { userId } });
 }
+
+// export async function createFrame(trackId: number, start = 0, end = 1000) {
+//   return await prisma.frame.create({
+//     data: { trackId, start, end, imageUrl: "" },
+//   });
+// }
 
 export async function getImageData() {
   const data = await fs.readFile("./test-fixtures/test-image.png", {
