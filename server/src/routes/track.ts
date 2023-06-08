@@ -11,35 +11,34 @@ import { Prisma } from "@prisma/client";
 
 const trackRouter = express.Router();
 trackRouter.use(requireAuth);
-
-trackRouter.get("/tracks", loadTrack, async (req, res) => {
-  console.log(req.user.id);
-  const tracks = await prisma.track.findMany({
-    where: { userId: req.user.id },
-  });
-  if (!tracks) return res.status(404).send("No tracks found");
-  res.status(200).send(req.track);
-});
-
-trackRouter.get("/:trackId", loadTrack, async (req, res) => {
-  res.status(200).send(req.track);
-});
-
 /**
  * Save the frames to s3 and return the urls
  * @param rawFrames - frames with image data
  * @returns frames with image urls
  */
 export async function saveFrames(rawFrames: RawFrame[]) {
-  const allImageData = rawFrames.map((frame) => frame.imageData);
-  const imageUrls = await saveImageBulk(allImageData);
+  const allimgData = rawFrames.map((frame) => frame.imgData);
+  const imgUrls = await saveImageBulk(allimgData);
   const framesWithUrls = rawFrames.map((frame, i) => {
-    const nextFrame: Frame = _.omit(frame, "imageData");
-    nextFrame.imageUrl = imageUrls[i]?.url;
+    const nextFrame: Frame = _.omit(frame, "imgData");
+    nextFrame.imgUrl = imgUrls[i]?.url;
     return nextFrame;
   });
   return framesWithUrls;
 }
+
+trackRouter.get("/", async (req, res) => {
+  const tracks = await prisma.track.findMany({
+    where: { userId: req.user.id },
+  });
+
+  if (!tracks) return res.status(404).send("No tracks found");
+  res.status(200).send(tracks);
+});
+
+trackRouter.get("/:trackId", loadTrack, async (req, res) => {
+  res.status(200).send(req.track);
+});
 
 trackRouter.put(
   "/:trackId",
@@ -60,7 +59,7 @@ trackRouter.put(
 
     // delete the old images from s3
     const oldFrames = req.track.frames;
-    await deleteImageBulk(oldFrames.map((frame) => frame.imageUrl));
+    await deleteImageBulk(oldFrames.map((frame) => frame.imgUrl));
 
     res.status(200).send(track);
   }

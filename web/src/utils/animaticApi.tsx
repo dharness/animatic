@@ -21,7 +21,19 @@ async function saveCanvas() {
 }
 
 async function getAllTracks() {
-  return axiosInstance.get(`${baseUrl}/tracks`);
+  return axiosInstance.get(`${baseUrl}/track`);
 }
 
-export default { saveCanvas, getAllTracks };
+async function createTrack() {
+  const body = {
+    frames: [
+      {
+        duration: 1,
+        imgData: "",
+      },
+    ],
+  };
+  return axiosInstance.post(`${baseUrl}/track`, body);
+}
+
+export default { saveCanvas, getAllTracks, createTrack };

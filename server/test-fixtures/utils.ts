@@ -21,15 +21,15 @@ export async function createTrack(userId: string, frames: any[] = []) {
 }
 
 export async function makeRawFrames(count: number, duration = 2) {
-  const imageData = await getImageData();
+  const imgData = await getimgData();
   const frames = [...Array(count)].map(() => ({
-    imageData,
+    imgData,
     duration,
   }));
   return frames;
 }
 
-export async function getImageData() {
+export async function getimgData() {
   const data = await fs.readFile("./test-fixtures/test-image.png", {
     encoding: "base64",
   });

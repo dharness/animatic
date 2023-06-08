@@ -20,10 +20,10 @@ async function getAllImages() {
   };
   try {
     const results = await s3Client.send(new ListObjectsCommand(params));
-    const imageUrls = (results.Contents || []).map(({ Key }) =>
+    const imgUrls = (results.Contents || []).map(({ Key }) =>
       fileUrl(BUCKET_NAME, Key)
     );
-    return imageUrls;
+    return imgUrls;
   } catch (err) {
     console.error("Error", err);
   }
@@ -55,10 +55,10 @@ async function saveImage(base64: string) {
   }
 }
 
-async function deleteImageBulk(imageUrls: string[]) {
-  if (imageUrls.length === 0) return;
+async function deleteImageBulk(imgUrls: string[]) {
+  if (imgUrls.length === 0) return;
 
-  const Objects = imageUrls.map((url) => {
+  const Objects = imgUrls.map((url) => {
     const key = url.split("/").pop();
     return { Key: key };
   });

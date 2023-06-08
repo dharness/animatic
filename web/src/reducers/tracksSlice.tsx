@@ -2,10 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import animaticApi from "../utils/animaticApi";
 
 export const loadTracks = createAsyncThunk("tracks/load", async () => {
-  const response = await animaticApi.getAllTracks();
-  return {
-    ok: true,
-  };
+  const { data: tracks } = await animaticApi.getAllTracks();
+  if (!tracks) {
+    await animaticApi.createTrack();
+  }
+  return { tracks };
 });
 
 interface Frame {
@@ -20,10 +21,12 @@ interface Track {
 
 interface TracksState {
   tracks: Track[];
+  currentTrack: Track | null;
 }
 
 const initialState = {
   tracks: [],
+  currentTrack: null,
 } as TracksState;
 
 const projectsSlice = createSlice({

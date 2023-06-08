@@ -9,11 +9,11 @@ declare module "express-serve-static-core" {
 }
 
 export interface RawFrame {
-  imageData: string;
+  imgData: string;
   duration: number;
 }
 
 export interface Frame {
-  imageUrl: string;
+  imgUrl: string;
   duration: number;
 }

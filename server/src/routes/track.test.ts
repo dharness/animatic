@@ -4,7 +4,7 @@ import prisma from "./../utils/prisma";
 import {
   createTrack,
   createUser,
-  getImageData,
+  getimgData,
   makeRawFrames,
 } from "../../test-fixtures/utils";
 import { Prisma } from "@prisma/client";
@@ -26,8 +26,8 @@ afterAll(async () => {
   await prisma.$disconnect();
 
   // clear any existing images
-  const imageUrls = await getAllImages();
-  await deleteImageBulk(imageUrls);
+  const imgUrls = await getAllImages();
+  await deleteImageBulk(imgUrls);
 });
 
 beforeEach(async () => {
@@ -35,8 +35,8 @@ beforeEach(async () => {
   await prisma.track.deleteMany({});
 
   // clear any existing images
-  const imageUrls = await getAllImages();
-  await deleteImageBulk(imageUrls);
+  const imgUrls = await getAllImages();
+  await deleteImageBulk(imgUrls);
 });
 
 test("Create empty track", async () => {
