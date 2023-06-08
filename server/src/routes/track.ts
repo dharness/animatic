@@ -12,6 +12,15 @@ import { Prisma } from "@prisma/client";
 const trackRouter = express.Router();
 trackRouter.use(requireAuth);
 
+trackRouter.get("/tracks", loadTrack, async (req, res) => {
+  console.log(req.user.id);
+  const tracks = await prisma.track.findMany({
+    where: { userId: req.user.id },
+  });
+  if (!tracks) return res.status(404).send("No tracks found");
+  res.status(200).send(req.track);
+});
+
 trackRouter.get("/:trackId", loadTrack, async (req, res) => {
   res.status(200).send(req.track);
 });

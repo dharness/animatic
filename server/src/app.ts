@@ -8,8 +8,8 @@ import { requireAuth } from "./middleware/auth";
 import { trackRouter } from "./routes/track";
 
 const app = express();
-app.all("/api/*", requireAuth);
 app.use(cors());
+app.all("/api/*", requireAuth);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 

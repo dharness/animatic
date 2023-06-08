@@ -7,7 +7,7 @@ const StyledTimeline = styled.div`
 `;
 
 function Timeline() {
-    return (<StyledTimeline>Timeline</StyledTimeline>);
+  return <StyledTimeline>Timeline</StyledTimeline>;
 }
 
 export default Timeline;

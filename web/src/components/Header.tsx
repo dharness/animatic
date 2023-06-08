@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { RootState, useAppDispatch } from "../app/store";
-import { saveCanvas } from "../features/canvasSlice";
+import { saveCanvas } from "../reducers/canvasSlice";
 import { useSelector } from "react-redux";
 
 const StyledHeader = styled.div`
@@ -14,12 +14,14 @@ function Header() {
   const dispatch = useAppDispatch();
 
   function onSaveClick() {
-    dispatch(saveCanvas())
+    dispatch(saveCanvas());
   }
 
   return (
     <StyledHeader>
-      <button onClick={onSaveClick} disabled={isSaving}>Save</button>
+      <button onClick={onSaveClick} disabled={isSaving}>
+        Save
+      </button>
     </StyledHeader>
   );
 }

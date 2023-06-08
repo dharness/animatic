@@ -8,9 +8,7 @@ import { s3Client, region } from "./S3";
 import { v4 as uuidv4 } from "uuid";
 
 const BUCKET_NAME =
-  process.env.NODE_ENV === "production"
-    ? "animatic-frames"
-    : "animatic-frames-test";
+  process.env.NODE_ENV === "test" ? "animatic-frames-test" : "animatic-frames";
 
 const fileUrl = (bucket, key) => {
   return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;

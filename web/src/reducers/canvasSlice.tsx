@@ -1,5 +1,5 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import animaticApi from "./animaticApi";
+import animaticApi from "../utils/animaticApi";
 
 export const saveCanvasData = createAsyncThunk(
   "canvas/saveCanvasData",
