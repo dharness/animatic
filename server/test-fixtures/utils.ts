@@ -15,20 +15,16 @@ export async function createUser() {
   };
 }
 
-export async function createTrack(userId: string, rawFrames: any[] = []) {
-  const frames = rawFrames.map(({ imageData, ...frame }) => ({
-    ...frame,
-    imageUrl: `https://test-url.com/test.png`,
-  }));
+export async function createTrack(userId: string, frames: any[] = []) {
   const data = { userId, frames };
   return await prisma.track.create({ data });
 }
 
-export async function makeRawFrames(count: number) {
+export async function makeRawFrames(count: number, duration = 2) {
   const imageData = await getImageData();
   const frames = [...Array(count)].map(() => ({
     imageData,
-    duration: 2,
+    duration,
   }));
   return frames;
 }

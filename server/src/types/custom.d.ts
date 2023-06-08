@@ -7,3 +7,13 @@ declare module "express-serve-static-core" {
     frame?: Frame;
   }
 }
+
+export interface RawFrame {
+  imageData: string;
+  duration: number;
+}
+
+export interface Frame {
+  imageUrl: string;
+  duration: number;
+}

@@ -1,4 +1,9 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  DeleteObjectsCommand,
+  ListObjectsCommand,
+  PutObjectCommand,
+} from "@aws-sdk/client-s3";
 import { s3Client, region } from "./S3";
 import { v4 as uuidv4 } from "uuid";
 
@@ -11,12 +16,23 @@ const fileUrl = (bucket, key) => {
   return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
 };
 
+async function getAllImages() {
+  const params = {
+    Bucket: BUCKET_NAME,
+  };
+  try {
+    const results = await s3Client.send(new ListObjectsCommand(params));
+    const imageUrls = results.Contents.map(({ Key }) =>
+      fileUrl(BUCKET_NAME, Key)
+    );
+    return imageUrls;
+  } catch (err) {
+    console.error("Error", err);
+  }
+}
+
 async function saveImageBulk(base64Bulk: string[]) {
-  return Promise.all(
-    base64Bulk.map(async (base64) => {
-      return saveImage(base64);
-    })
-  );
+  return Promise.all(base64Bulk.map(saveImage));
 }
 
 async function saveImage(base64: string) {
@@ -41,4 +57,23 @@ async function saveImage(base64: string) {
   }
 }
 
-export { saveImage, saveImageBulk };
+async function deleteImageBulk(imageUrls: string[]) {
+  const Objects = imageUrls.map((url) => {
+    const key = url.split("/").pop();
+    return { Key: key };
+  });
+
+  const command = new DeleteObjectsCommand({
+    Bucket: BUCKET_NAME,
+    Delete: { Objects },
+  });
+
+  try {
+    const { Deleted } = await s3Client.send(command);
+    return Deleted;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export { saveImage, saveImageBulk, deleteImageBulk, getAllImages };
