@@ -10,13 +10,7 @@ const trackRouter = express.Router();
 trackRouter.use(requireAuth);
 
 trackRouter.get("/:trackId", loadTrack, async (req, res) => {
-  const { id } = req.user;
-  const tracks = await prisma.track.findMany({
-    where: { userId: id },
-  });
-
-  if (tracks == null) return res.status(400).send("Failed to get tracks");
-  res.status(200).send(tracks);
+  res.status(200).send(req.track);
 });
 
 trackRouter.post("/", validate(postTrackSchema), async (req, res) => {

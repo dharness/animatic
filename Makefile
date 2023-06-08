@@ -1,4 +1,4 @@
-.PHONY: supabase-start supabase-stop
+.PHONY: supabase-start supabase-stop supabase-status
 
 
 supabase-up:
@@ -13,3 +13,9 @@ supabase-down:
 	supabase stop; \
 	cd ../test; \
 	supabase stop
+
+supabase-status:
+	@cd supabase/local; \
+	supabase status; \
+	cd ../test; \
+	supabase status

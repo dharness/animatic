@@ -1,10 +1,11 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client, region } from "./S3";
 import { v4 as uuidv4 } from "uuid";
-import fs from "fs/promises";
-import { array } from "joi";
 
-const BUCKET_NAME = "animatic-frames";
+const BUCKET_NAME =
+  process.env.NODE_ENV === "production"
+    ? "animatic-frames"
+    : "animatic-frames-test";
 
 const fileUrl = (bucket, key) => {
   return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
