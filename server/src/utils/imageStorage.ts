@@ -24,7 +24,7 @@ async function getImageData(imgUrl: string) {
   };
   try {
     const response = await s3Client.send(new GetObjectCommand(params));
-    const str = await response.Body.transformToString();
+    const str = await response.Body.transformToString("base64");
     return str;
   } catch (err) {
     console.error("Error", err);

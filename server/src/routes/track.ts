@@ -10,35 +10,10 @@ import {
   getImageData,
   saveImageBulk,
 } from "../utils/imageStorage";
-import { Frame, RawFrame } from "../types/custom";
+import { formatTrack, saveFrames } from "./trackHelper";
 
 const trackRouter = express.Router();
 trackRouter.use(requireAuth);
-/**
- * Save the frames to s3 and return the urls
- * @param rawFrames - frames with image data
- * @returns frames with image urls
- */
-export async function saveFrames(rawFrames: RawFrame[]) {
-  const allimgData = rawFrames.map((frame) => frame.imgData);
-  const imgUrls = await saveImageBulk(allimgData);
-  const framesWithUrls = rawFrames.map((frame, i) => {
-    const nextFrame: Frame = _.omit(frame, "imgData");
-    nextFrame.imgUrl = imgUrls[i]?.url;
-    return nextFrame;
-  });
-  return framesWithUrls;
-}
-
-async function getImageDataForTrack(track) {
-  track.frames = await Promise.all(
-    track.frames.map(async (frame) => {
-      const imgData = await getImageData(frame.imgUrl);
-      return _.omit(frame, "imgUrl").assign({ imgData });
-    })
-  );
-  return track;
-}
 
 trackRouter.get("/", async (req, res) => {
   const tracks = await prisma.track.findMany({
@@ -46,13 +21,12 @@ trackRouter.get("/", async (req, res) => {
   });
 
   if (!tracks) return res.status(404).send("No tracks found");
-  const formattedTracks = Promise.all(tracks.map(getImageDataForTrack));
-  console.log("jeeeee");
-  res.status(200).send(formattedTracks);
+  await Promise.all(tracks.map(formatTrack));
+  res.status(200).send(tracks);
 });
 
 trackRouter.get("/:trackId", loadTrack, async (req, res) => {
-  const formattedTrack = await getImageDataForTrack(req.track);
+  await formatTrack(req.track);
   res.status(200).send(req.track);
 });
 
@@ -77,6 +51,7 @@ trackRouter.put(
     const oldFrames = req.track.frames;
     await deleteImageBulk(oldFrames.map((frame) => frame.imgUrl));
 
+    await formatTrack(track);
     res.status(200).send(track);
   }
 );
@@ -93,6 +68,8 @@ trackRouter.post("/", validate(postTrackSchema), async (req, res) => {
   const track = await prisma.track.create({ data });
 
   if (!track) return res.status(400).send("Failed to create track");
+
+  await formatTrack(track);
   res.status(200).send(track);
 });
 

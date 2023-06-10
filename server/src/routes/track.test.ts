@@ -1,6 +1,7 @@
 import app from "./../app";
 import request from "supertest";
 import prisma from "./../utils/prisma";
+import _ from "lodash";
 import {
   createTrack,
   createUser,
@@ -9,12 +10,14 @@ import {
 } from "../../test-fixtures/utils";
 import { Prisma } from "@prisma/client";
 import { deleteImageBulk, getAllImages } from "../utils/imageStorage";
-import { saveFrames } from "./track";
 import exp from "constants";
+import { saveFrames } from "./trackHelper";
 
 let accessToken: string;
 let userId: string;
 const countImages = async () => (await getAllImages()).length;
+const isBase64 = (str: string) =>
+  Buffer.from(str, "base64").toString("base64") === str;
 
 beforeAll(async () => {
   const user = await createUser();
@@ -50,7 +53,26 @@ test("Create empty track", async () => {
   expect(track.id).toEqual(response.body.id);
 });
 
-test.only("Get a track", async () => {
+test.only("Get all tracks", async () => {
+  const rawFrames = await makeRawFrames(5);
+  const frames = await saveFrames(rawFrames);
+  const { id } = await createTrack(userId, frames);
+
+  const response = await request(app)
+    .get(`/api/track`)
+    .set("Authorization", "Bearer " + accessToken);
+
+  expect(response.status).toEqual(200);
+  expect(response.body.length).toEqual(1);
+  const [track] = response.body;
+
+  expect(track.frames.length).toEqual(5);
+  track.frames.forEach((frame) => {
+    expect(isBase64(frame.imgData)).toEqual(true);
+  });
+});
+
+test("Get a track", async () => {
   const rawFrames = await makeRawFrames(5);
   const frames = await saveFrames(rawFrames);
   const { id } = await createTrack(userId, frames);
@@ -62,7 +84,9 @@ test.only("Get a track", async () => {
   expect(response.status).toEqual(200);
   expect(response.body.id).toEqual(id);
   expect(response.body.frames.length).toEqual(5);
-  console.log(response.body.frames);
+  response.body.frames.forEach((frame) => {
+    expect(isBase64(frame.imgData)).toEqual(true);
+  });
 });
 
 test("Create a track with frames", async () => {
