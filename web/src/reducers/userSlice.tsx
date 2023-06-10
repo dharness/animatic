@@ -72,7 +72,7 @@ const usersSlice = createSlice({
         }
         Object.assign(state, action.payload, { loading: false });
       })
-      .addCase(loadUser.pending, (state, action) => {
+      .addCase(loadUser.pending, (state) => {
         Object.assign(state, { loading: true });
       });
   },

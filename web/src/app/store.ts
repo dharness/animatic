@@ -1,18 +1,20 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import toolsReducer from "../reducers/toolsSlice";
-import userReducer from "../reducers/userSlice";
-import projectsReducer from "../reducers/projectsSlice";
-import canvasReducer from "../reducers/canvasSlice";
-import tracksReducer from "../reducers/tracksSlice";
+import toolsReducer from "./../reducers/toolsSlice";
+import userReducer from "./../reducers/userSlice";
+import tracksReducer from "./../reducers/trackSlice";
+import framesReducer from "./../reducers/framesSlice";
+import workspaceReducer from "./../reducers/workspaceSlice";
 
 export const store = configureStore({
   reducer: {
     tools: toolsReducer,
     user: userReducer,
-    projects: projectsReducer,
-    canvas: canvasReducer,
-    tracks: tracksReducer,
+    entities: combineReducers({
+      tracks: tracksReducer,
+      frames: framesReducer,
+    }),
+    workspace: workspaceReducer,
   },
 });
 

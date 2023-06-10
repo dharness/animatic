@@ -7,7 +7,13 @@ import Tool from "../utils/tools/Tool";
 import Brush from "../utils/tools/BrushTool";
 import Eraser from "../utils/tools/EraserTool";
 import Cursor from "./Cursor";
-import { saveCanvasData } from "../reducers/canvasSlice";
+import { selectIsSavingTrack } from "../reducers/trackSlice";
+import {
+  frameUpdated,
+  selectActiveFrame,
+  selectIsFrameLoaded,
+} from "../reducers/framesSlice";
+import { addImageToCanvas } from "../utils/canvasHelpers";
 
 const StyledDrawingArea = styled.div`
   background: grey;
@@ -33,12 +39,18 @@ const tools: Tools = {
   [ToolId.Eraser]: new Eraser(),
 };
 
-function Artboard() {
+function DrawingSurface() {
   const dispatch = useAppDispatch();
   const activeToolId = useSelector(
     (state: RootState) => state.tools.currentTool
   );
-  const isSaving = useSelector((state: RootState) => state.canvas.isSaving);
+  const isSaving = useSelector(selectIsSavingTrack);
+  const activeFrame = useSelector(selectActiveFrame);
+  const isFrameLoaded = useSelector(
+    (state: RootState) =>
+      activeFrame && selectIsFrameLoaded(state, activeFrame.id)
+  );
+
   const canvasRef = useRef<HTMLCanvasElement>(document.createElement("canvas"));
   const aspectRatio = 3 / 4;
   const canvasWidth = 500;
@@ -53,6 +65,8 @@ function Artboard() {
 
   function onMouseUp(event: MouseEvent) {
     activeToolRef.current?.onMouseUp(event);
+    const imgData = canvasRef.current?.toDataURL().split(",")[1];
+    dispatch(frameUpdated({ imgData, frameId: activeFrame?.id }));
   }
 
   function onMouseMove(event: MouseEvent) {
@@ -62,14 +76,17 @@ function Artboard() {
   function onMouseEnter() {
     setMouseIsOver(true);
   }
+
   function onMouseLeave() {
     setMouseIsOver(false);
   }
 
   useEffect(() => {
-    if (!isSaving) return;
-    dispatch(saveCanvasData());
-  }, [isSaving]);
+    if (isFrameLoaded || !activeFrame) return;
+    addImageToCanvas(canvasRef.current, activeFrame.imgUrl).then((imgData) => {
+      dispatch(frameUpdated({ imgData, frameId: activeFrame.id }));
+    });
+  }, [isFrameLoaded, activeFrame]);
 
   useEffect(() => {
     activeToolRef.current = tools[activeToolId];
@@ -101,4 +118,4 @@ function Artboard() {
   );
 }
 
-export default Artboard;
+export default DrawingSurface;

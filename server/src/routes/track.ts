@@ -5,9 +5,12 @@ import prisma from "../utils/prisma";
 import { loadTrack } from "../middleware/loaders";
 import { validate } from "../middleware/validate";
 import { postTrackSchema, putTrackSchema } from "./tackSchemas";
-import { deleteImageBulk, saveImageBulk } from "../utils/imageStorage";
+import {
+  deleteImageBulk,
+  getImageData,
+  saveImageBulk,
+} from "../utils/imageStorage";
 import { Frame, RawFrame } from "../types/custom";
-import { Prisma } from "@prisma/client";
 
 const trackRouter = express.Router();
 trackRouter.use(requireAuth);
@@ -27,16 +30,29 @@ export async function saveFrames(rawFrames: RawFrame[]) {
   return framesWithUrls;
 }
 
+async function getImageDataForTrack(track) {
+  track.frames = await Promise.all(
+    track.frames.map(async (frame) => {
+      const imgData = await getImageData(frame.imgUrl);
+      return _.omit(frame, "imgUrl").assign({ imgData });
+    })
+  );
+  return track;
+}
+
 trackRouter.get("/", async (req, res) => {
   const tracks = await prisma.track.findMany({
     where: { userId: req.user.id },
   });
 
   if (!tracks) return res.status(404).send("No tracks found");
-  res.status(200).send(tracks);
+  const formattedTracks = Promise.all(tracks.map(getImageDataForTrack));
+  console.log("jeeeee");
+  res.status(200).send(formattedTracks);
 });
 
 trackRouter.get("/:trackId", loadTrack, async (req, res) => {
+  const formattedTrack = await getImageDataForTrack(req.track);
   res.status(200).send(req.track);
 });
 

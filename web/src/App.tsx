@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { loadUser } from "./reducers/userSlice";
-import DrawingView from "./components/DrawingView";
+import DrawingWorkspace from "./components/DrawingWorkspace";
 import RequireAuth from "./components/RequireAuth";
 import { useAppDispatch } from "./app/store";
+import { loadUser } from "./reducers/userSlice";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -13,7 +13,7 @@ function App() {
   return (
     <>
       <RequireAuth>
-        <DrawingView />
+        <DrawingWorkspace />
       </RequireAuth>
     </>
   );

@@ -1,11 +1,11 @@
 import Header from "./Header";
 import styled from "styled-components";
 import Toolbar from "./Toolbar";
-import Artboard from "./DrawingArea";
+import DrawingSurface from "./DrawingSurface";
 import Timeline from "./Timeline";
 import { useAppDispatch } from "../app/store";
-import { useEffect } from "react";
-import { loadTracks } from "../reducers/tracksSlice";
+import { useEffect, useState } from "react";
+import { loadTracks } from "../reducers/trackSlice";
 
 const PageLayout = styled.div`
   background: red;
@@ -28,7 +28,7 @@ function DrawingView() {
     <PageLayout>
       <Header />
       <Toolbar></Toolbar>
-      <Artboard></Artboard>
+      <DrawingSurface></DrawingSurface>
       <Timeline></Timeline>
     </PageLayout>
   );

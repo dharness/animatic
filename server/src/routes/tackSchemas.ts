@@ -2,7 +2,7 @@ import Joi from "joi";
 
 export const postTrackSchema = Joi.object({
   frames: Joi.array().items({
-    imgData: Joi.string().base64().required(),
+    imgData: Joi.string().base64().allow("").required(),
     duration: Joi.number().required(),
   }),
 });

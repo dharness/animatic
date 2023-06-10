@@ -50,9 +50,10 @@ test("Create empty track", async () => {
   expect(track.id).toEqual(response.body.id);
 });
 
-test("Get a track", async () => {
+test.only("Get a track", async () => {
   const rawFrames = await makeRawFrames(5);
-  const { id } = await createTrack(userId, rawFrames);
+  const frames = await saveFrames(rawFrames);
+  const { id } = await createTrack(userId, frames);
 
   const response = await request(app)
     .get(`/api/track/${id}`)
@@ -61,6 +62,7 @@ test("Get a track", async () => {
   expect(response.status).toEqual(200);
   expect(response.body.id).toEqual(id);
   expect(response.body.frames.length).toEqual(5);
+  console.log(response.body.frames);
 });
 
 test("Create a track with frames", async () => {
