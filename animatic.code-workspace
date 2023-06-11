@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "name": "Server",
+      "path": "server"
+    },
+    {
+      "name": "Web",
+      "path": "web"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "tsconfig.*": true,
+      "node_modules": true,
+      ".env": true,
+      "package-lock.json": true,
+      "vite.config.ts": true,
+      ".vite": true,
+      "dist": true
+    }
+  }
+}

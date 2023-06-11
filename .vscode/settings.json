@@ -1,10 +1,1 @@
-{
-  "deno.lint": true,
-  "deno.enable": true,
-  "deno.enablePaths": ["./deno"],
-  "deno.codeLens.implementations": true,
-  "deno.codeLens.references": true,
-  "deno.codeLens.referencesAllFunctions": true,
-  "deno.importMap": "./deno/deno.jsonc",
-  "deno.config": "./deno/deno.jsonc"
-}
+{}

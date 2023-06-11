@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { RootState, useAppDispatch } from "../app/store";
-import { saveCanvas } from "../features/canvasSlice";
+import { useAppDispatch } from "../app/store";
 import { useSelector } from "react-redux";
+import { saveTrack, selectIsSavingTrack } from "../reducers/trackSlice";
 
 const StyledHeader = styled.div`
   background: yellow;
@@ -10,16 +10,18 @@ const StyledHeader = styled.div`
 `;
 
 function Header() {
-  const isSaving = useSelector((state: RootState) => state.canvas.isSaving);
+  const isSaving = useSelector(selectIsSavingTrack);
   const dispatch = useAppDispatch();
 
   function onSaveClick() {
-    dispatch(saveCanvas())
+    dispatch(saveTrack());
   }
 
   return (
     <StyledHeader>
-      <button onClick={onSaveClick} disabled={isSaving}>Save</button>
+      <button onClick={onSaveClick} disabled={isSaving}>
+        Save
+      </button>
     </StyledHeader>
   );
 }

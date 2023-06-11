@@ -1,15 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import { Normalize } from 'styled-normalize'
-import { store } from './app/store.ts'
-import { Provider } from 'react-redux'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import Login from './components/Login.tsx'
-import RequireAuth from './components/RequireAuth.tsx'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import { Normalize } from "styled-normalize";
+import { store } from "./app/store.ts";
+import { Provider } from "react-redux";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Login from "./components/Login.tsx";
 
 const router = createBrowserRouter([
   {
@@ -18,15 +14,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/app",
-    element: (<App />),
+    element: <App />,
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <Normalize />
       <RouterProvider router={router} />
     </Provider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);
