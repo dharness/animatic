@@ -97,7 +97,6 @@ test("Create a track with frames", async () => {
     .post("/api/track")
     .set("Authorization", "Bearer " + accessToken)
     .send(body);
-
   expect(response.status).toEqual(200);
   const track = await prisma.track.findFirst();
   expect(track.frames.length).toEqual(5);

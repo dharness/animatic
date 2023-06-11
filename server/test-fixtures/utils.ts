@@ -1,6 +1,7 @@
 import supabase from "./../src/utils/supabase";
 import prisma from "./../src/utils/prisma";
 import fs from "fs/promises";
+import { v4 as uuidv4 } from "uuid";
 
 export async function createUser() {
   const { data, error } = await supabase.auth.signUp({
@@ -23,6 +24,7 @@ export async function createTrack(userId: string, frames: any[] = []) {
 export async function makeRawFrames(count: number, duration = 2) {
   const imgData = await getimgData();
   const frames = [...Array(count)].map(() => ({
+    id: uuidv4(),
     imgData,
     duration,
   }));
