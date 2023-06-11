@@ -1,11 +1,16 @@
 import { normalize, schema } from "normalizr";
-import { Frame, parseFrames } from "./Frame";
+import { defaultFrame, parseFrames } from "./Frame";
 import _ from "lodash";
 
 export interface Track {
   id: string;
-  frames: Frame[];
+  frames: string[];
 }
+
+export const defaultTrack: Track = {
+  id: "default",
+  frames: [defaultFrame.id],
+};
 
 const frame = new schema.Entity("frames");
 const track = new schema.Entity("tracks", {
@@ -15,7 +20,13 @@ const track = new schema.Entity("tracks", {
 const tracksSchema = new schema.Array(track);
 
 export const parseTracks = (data: any) => {
-  let { tracks, frames } = normalize(data, tracksSchema).entities;
+  for (const track of data) {
+    if (track.frames.length === 0) {
+      track.frames = [defaultFrame.id];
+    }
+  }
+  const { entities } = normalize(data, tracksSchema);
+  let { tracks, frames } = entities;
   tracks = _.mapValues<Track>(tracks, parseTrack);
   frames = parseFrames(frames);
   return { tracks, frames };

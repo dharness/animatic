@@ -23,7 +23,7 @@ export async function saveFrames(rawFrames: RawFrame[]) {
  */
 export async function formatTrack(track) {
   await loadImageDataForTrack(track);
-  delete track.imgUrl;
+  track.frames = track.frames.map((frame) => _.omit(frame, "imgUrl"));
 }
 
 /**

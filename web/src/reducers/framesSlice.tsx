@@ -1,19 +1,22 @@
-import { createSelector, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
-import { Frame } from "../models/Frame";
+import { Frame, defaultFrame } from "../models/Frame";
 import { RootState } from "../app/store";
 
 interface FrameState {
   [key: string]: Frame;
 }
 
-const initialState = {} as FrameState;
+export const initialState = {
+  [defaultFrame.id]: defaultFrame,
+} as FrameState;
 
 const framesSlice = createSlice({
   name: "frames",
   initialState,
   reducers: {
     framesLoaded: (state, action) => {
+      if (_.isEmpty(action.payload)) return state;
       return action.payload;
     },
     frameUpdated: (state, action) => {
@@ -29,15 +32,3 @@ export const { framesLoaded, frameUpdated } = framesSlice.actions;
 export default framesSlice.reducer;
 
 export const selectFrames = (state: RootState) => state.entities.frames;
-export const selectActiveFrame = createSelector([selectFrames], (frames) => {
-  // return the first frame for now
-  // since we dont support selecting frames yet
-  for (const [_, frame] of Object.entries(frames)) {
-    return frame;
-  }
-});
-export const selectIsFrameLoaded = (state: RootState, frameId: string) => {
-  const hasUrl = state.entities.frames[frameId]?.imgUrl;
-  const hasData = state.entities.frames[frameId]?.imgData;
-  return Boolean(hasUrl && hasData);
-};

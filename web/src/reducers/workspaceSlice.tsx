@@ -1,4 +1,6 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../app/store";
+import { Frame } from "../models/Frame";
 
 export const loadProjects = createAction("loadProjects");
 
@@ -11,12 +13,12 @@ enum LoadingState {
 
 interface WorkspaceState {
   loadingStatuses: { [key: string]: LoadingState };
-  activeFrame?: string;
+  activeFrameId?: string;
 }
 
 const initialState = {
   loadingStatuses: {},
-  activeFrame: undefined,
+  activeFrameId: "default",
 } as WorkspaceState;
 
 const workspaceSlice = createSlice({
@@ -24,10 +26,15 @@ const workspaceSlice = createSlice({
   initialState,
   reducers: {
     frameActivated(state, action) {
-      state.activeFrame = action.payload;
+      state.activeFrameId = action.payload;
     },
   },
 });
 
 export const { frameActivated } = workspaceSlice.actions;
 export default workspaceSlice.reducer;
+
+export const selectActiveFrameId = (state: RootState): string =>
+  state.workspace.activeFrameId || "";
+export const selectActiveFrame = (state: RootState): Frame =>
+  state.entities.frames[selectActiveFrameId(state)];

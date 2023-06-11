@@ -8,11 +8,11 @@ import Brush from "../utils/tools/BrushTool";
 import Eraser from "../utils/tools/EraserTool";
 import Cursor from "./Cursor";
 import { selectIsSavingTrack } from "../reducers/trackSlice";
+import { frameUpdated } from "../reducers/framesSlice";
 import {
-  frameUpdated,
   selectActiveFrame,
-  selectIsFrameLoaded,
-} from "../reducers/framesSlice";
+  selectActiveFrameId,
+} from "../reducers/workspaceSlice";
 import { addImageToCanvas } from "../utils/canvasHelpers";
 
 const StyledDrawingArea = styled.div`
@@ -45,11 +45,8 @@ function DrawingSurface() {
     (state: RootState) => state.tools.currentTool
   );
   const isSaving = useSelector(selectIsSavingTrack);
+  const activeFrameId = useSelector(selectActiveFrameId);
   const activeFrame = useSelector(selectActiveFrame);
-  const isFrameLoaded = useSelector(
-    (state: RootState) =>
-      activeFrame && selectIsFrameLoaded(state, activeFrame.id)
-  );
 
   const canvasRef = useRef<HTMLCanvasElement>(document.createElement("canvas"));
   const aspectRatio = 3 / 4;
@@ -59,34 +56,30 @@ function DrawingSurface() {
   const drawingAreaRef = useRef<HTMLDivElement>(null);
   const [mouseIsOver, setMouseIsOver] = useState(false);
 
-  function onMouseDown(event: MouseEvent) {
-    activeToolRef.current?.onMouseDown(event);
-  }
+  const onMouseDown = (event: React.MouseEvent) => {
+    activeToolRef.current?.onMouseDown(event.nativeEvent);
+  };
 
-  function onMouseUp(event: MouseEvent) {
+  const onMouseUp = (event: MouseEvent) => {
     activeToolRef.current?.onMouseUp(event);
     const imgData = canvasRef.current?.toDataURL().split(",")[1];
-    dispatch(frameUpdated({ imgData, frameId: activeFrame?.id }));
-  }
+    dispatch(frameUpdated({ imgData, frameId: activeFrameId }));
+  };
 
-  function onMouseMove(event: MouseEvent) {
-    activeToolRef.current?.onMouseMove(event);
-  }
+  const onMouseMove = (event: React.MouseEvent) => {
+    activeToolRef.current?.onMouseMove(event.nativeEvent);
+  };
 
-  function onMouseEnter() {
+  const onMouseEnter = () => {
     setMouseIsOver(true);
-  }
+  };
 
-  function onMouseLeave() {
+  const onMouseLeave = () => {
     setMouseIsOver(false);
-  }
-
+  };
   useEffect(() => {
-    if (isFrameLoaded || !activeFrame) return;
-    addImageToCanvas(canvasRef.current, activeFrame.imgUrl).then((imgData) => {
-      dispatch(frameUpdated({ imgData, frameId: activeFrame.id }));
-    });
-  }, [isFrameLoaded, activeFrame]);
+    addImageToCanvas(canvasRef.current, activeFrame?.imgData);
+  }, [activeFrameId]);
 
   useEffect(() => {
     activeToolRef.current = tools[activeToolId];
@@ -95,25 +88,27 @@ function DrawingSurface() {
 
   useEffect(() => {
     window.addEventListener("mouseup", onMouseUp);
-    canvasRef.current?.addEventListener("mousedown", onMouseDown);
-    canvasRef.current?.addEventListener("mousemove", onMouseMove);
-    drawingAreaRef.current?.addEventListener("mouseenter", onMouseEnter);
-    drawingAreaRef.current?.addEventListener("mouseleave", onMouseLeave);
 
     return () => {
       window.removeEventListener("mouseup", onMouseUp);
-      canvasRef.current?.removeEventListener("mousedown", onMouseDown);
-      canvasRef.current?.removeEventListener("mousemove", onMouseMove);
-      drawingAreaRef.current?.removeEventListener("mouseenter", onMouseEnter);
-      drawingAreaRef.current?.removeEventListener("mouseleave", onMouseLeave);
     };
-  }, []);
+  }, [activeFrameId]);
 
   return (
-    <StyledDrawingArea ref={drawingAreaRef}>
+    <StyledDrawingArea
+      ref={drawingAreaRef}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       {isSaving && <div>Saving...</div>}
       <Cursor active={mouseIsOver} />
-      <StyledCanvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />
+      <StyledCanvas
+        ref={canvasRef}
+        width={canvasWidth}
+        height={canvasHeight}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+      />
     </StyledDrawingArea>
   );
 }

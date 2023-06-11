@@ -53,7 +53,7 @@ test("Create empty track", async () => {
   expect(track.id).toEqual(response.body.id);
 });
 
-test.only("Get all tracks", async () => {
+test("Get all tracks", async () => {
   const rawFrames = await makeRawFrames(5);
   const frames = await saveFrames(rawFrames);
   const { id } = await createTrack(userId, frames);

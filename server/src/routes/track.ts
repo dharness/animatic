@@ -5,11 +5,7 @@ import prisma from "../utils/prisma";
 import { loadTrack } from "../middleware/loaders";
 import { validate } from "../middleware/validate";
 import { postTrackSchema, putTrackSchema } from "./tackSchemas";
-import {
-  deleteImageBulk,
-  getImageData,
-  saveImageBulk,
-} from "../utils/imageStorage";
+import { deleteImageBulk } from "../utils/imageStorage";
 import { formatTrack, saveFrames } from "./trackHelper";
 
 const trackRouter = express.Router();

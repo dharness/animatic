@@ -12,6 +12,11 @@ export interface RawFrame {
   duration: number;
 }
 
+export interface RawTrack {
+  id: string;
+  frames: RawFrame[];
+}
+
 let axiosInstance = axios.create();
 axiosInstance.interceptors.request.use(async (config) => {
   const { data } = await supabase.auth.getSession();
@@ -21,8 +26,12 @@ axiosInstance.interceptors.request.use(async (config) => {
   return config;
 });
 
-async function saveCanvas() {
-  return axiosInstance.get(`${baseUrl}/protected`);
+async function saveTrack(track: RawTrack) {
+  const { data } = await axiosInstance.put(
+    `${baseUrl}/track/${track.id}`,
+    track
+  );
+  console.log(data);
 }
 
 async function getTracks() {
@@ -55,4 +64,4 @@ async function updateTrack(trackId: string, frames: RawFrame[]) {
   return track;
 }
 
-export default { saveCanvas, getTracks, createTrack, updateTrack };
+export default { saveTrack, getTracks, createTrack, updateTrack };
