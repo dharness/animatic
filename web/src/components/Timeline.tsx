@@ -14,6 +14,7 @@ import {
   frameSelected,
   selectActiveFrameId,
 } from "../reducers/workspaceSlice";
+import { useState } from "react";
 
 const TimelineWrapper = styled.div`
   background: orange;
@@ -39,6 +40,7 @@ function Timeline() {
   const activeFrameId = useSelector(selectActiveFrameId);
   const { id: trackId } = useSelector(selectActiveTack);
   const dispatch = useAppDispatch();
+  const [playIntervalId, setPlayIntervalId] = useState(0);
 
   const addFrame = () => {
     const frameId = uuidv4();
@@ -58,11 +60,31 @@ function Timeline() {
     dispatch(frameMarkedForClear({ frameId: activeFrameId }));
   };
 
+  const playAnimation = () => {
+    if (playIntervalId) {
+      setPlayIntervalId(0);
+      return clearInterval(playIntervalId);
+    }
+
+    const frameIds = Object.keys(frames);
+    let i = 0;
+    const intervalId: number = setInterval(() => {
+      const frameId = frameIds[i];
+      dispatch(frameSelected(frameId));
+      i = (i + 1) % frameIds.length;
+    }, 500);
+    setPlayIntervalId(intervalId);
+    console.log(frames);
+  };
+
   return (
     <TimelineWrapper>
       <Toolbar>
         <button onClick={addFrame}>Add Frame</button>
         <button onClick={clearFrame}>Clear Frame</button>
+        <button onClick={playAnimation}>
+          {playIntervalId ? "Pause" : "Play"}
+        </button>
       </Toolbar>
       <Frames>
         {Object.values(frames).map((frame) => (
