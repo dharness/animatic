@@ -25,10 +25,19 @@ const framesSlice = createSlice({
         state[frameId].imgData = imgData;
       }
     },
+    frameAdded: (state, action) => {
+      const { frameId } = action.payload;
+      const frame = { ...defaultFrame, id: frameId };
+      state[frameId] = frame;
+    },
+    frameDeleted: (state, action) => {
+      delete state[action.payload.frameId];
+    },
   },
 });
 
-export const { framesLoaded, frameUpdated } = framesSlice.actions;
+export const { framesLoaded, frameUpdated, frameAdded, frameDeleted } =
+  framesSlice.actions;
 export default framesSlice.reducer;
 
 export const selectFrames = (state: RootState) => state.entities.frames;

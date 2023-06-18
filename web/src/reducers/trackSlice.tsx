@@ -2,9 +2,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import _ from "lodash";
 import animaticApi from "../utils/animaticApi";
 import { Track, defaultTrack, parseTracks } from "../models/Track";
-import { framesLoaded } from "./framesSlice";
+import { frameAdded, frameDeleted, framesLoaded } from "./framesSlice";
 import { RootState } from "../app/store";
-import { frameActivated } from "./workspaceSlice";
+import { frameSelected } from "./workspaceSlice";
 
 export const saveTrack = createAsyncThunk(
   "tracks/save",
@@ -22,7 +22,7 @@ export const loadTracks = createAsyncThunk(
   "tracks/load",
   async (_payload, { dispatch }) => {
     const { tracks, frames } = parseTracks(await animaticApi.getTracks());
-    dispatch(frameActivated(_.values(tracks)[0].frames[0]));
+    dispatch(frameSelected(_.values(tracks)[0].frames[0]));
     dispatch(framesLoaded(frames));
     return { tracks };
   }
@@ -49,7 +49,17 @@ const tracksSlice = createSlice({
         console.log("Failed to load tracks");
       })
       .addCase(saveTrack.rejected, (state, action) => {
-        alert("Failed to save track");
+        console.error("Failed to save track");
+      })
+      .addCase(frameAdded, (state, action) => {
+        const { trackId, frameId } = action.payload;
+        state[trackId].frames.push(frameId);
+      })
+      .addCase(frameDeleted, (state, action) => {
+        const nextFrames = state[action.payload.trackId].frames.filter(
+          (frameId: string) => frameId !== action.payload.frameId
+        );
+        state[action.payload.trackId].frames = nextFrames;
       });
   },
 });
