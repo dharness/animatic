@@ -6,9 +6,12 @@ export interface Frame {
   duration: number;
 }
 
+// This is the smallest, empty, base-64 encoded png
+const EMPTY_BASE64_PNG =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
 export const defaultFrame: Frame = {
   id: "default",
-  imgData: "",
+  imgData: EMPTY_BASE64_PNG,
   duration: 1,
 };
 

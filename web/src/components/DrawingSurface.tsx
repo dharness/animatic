@@ -12,8 +12,9 @@ import { frameUpdated } from "../reducers/framesSlice";
 import {
   selectActiveFrame,
   selectActiveFrameId,
+  selectFrameIdToClear,
 } from "../reducers/workspaceSlice";
-import { addImageToCanvas } from "../utils/canvasHelpers";
+import { addImageToCanvas, clearCanvas } from "../utils/canvasHelpers";
 
 const StyledDrawingArea = styled.div`
   background: grey;
@@ -47,6 +48,7 @@ function DrawingSurface() {
   const isSaving = useSelector(selectIsSavingTrack);
   const activeFrameId = useSelector(selectActiveFrameId);
   const activeFrame = useSelector(selectActiveFrame);
+  const frameIdToClear = useSelector(selectFrameIdToClear);
 
   const canvasRef = useRef<HTMLCanvasElement>(document.createElement("canvas"));
   const aspectRatio = 3 / 4;
@@ -77,6 +79,14 @@ function DrawingSurface() {
   const onMouseLeave = () => {
     setMouseIsOver(false);
   };
+
+  useEffect(() => {
+    if (!frameIdToClear) return;
+    clearCanvas(canvasRef.current);
+    const imgData = canvasRef.current?.toDataURL().split(",")[1];
+    dispatch(frameUpdated({ imgData, frameId: activeFrameId }));
+  }, [frameIdToClear]);
+
   useEffect(() => {
     addImageToCanvas(canvasRef.current, activeFrame?.imgData);
   }, [activeFrameId]);
